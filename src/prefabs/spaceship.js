@@ -7,7 +7,7 @@ class Spaceship extends Phaser.GameObjects.Sprite {
         this.moveSpeed = game.settings.spaceshipSpeed
 
         // flip sprite
-        this.flipX = this.direction
+        if (this.direction === -1) this.flipX = true;
     }
 
     update() {

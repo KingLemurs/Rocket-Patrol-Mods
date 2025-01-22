@@ -69,22 +69,32 @@ class Play extends Phaser.Scene {
         // GAME OVER flag
         this.gameOver = false
 
+        var timer = this.time.addEvent({
+            delay: 1000,                // ms
+            callback: () => {
+                this.timeElapsed++;
+                this.timeLeft.setText(`Time Left: ${Math.max(0, Math.round((game.settings.gameTimer / 1000 - this.timeElapsed)))}`)
+            },
+            loop: true
+        });
+
+        this.timeLeft.setText(`Time Left: ${Math.max(0, Math.round((game.settings.gameTimer / 1000 - this.timeElapsed)))}`)
+
         // 60-second play clock
         scoreConfig.fixedWidth = 0
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5)
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5)
             this.gameOver = true
+            timer.remove();
         }, null, this)
     }
 
-    update(time) {
+    update() {
         // check key input for restart
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
             this.scene.restart()
         }
-        this.timeElapsed = time;
-        this.timeLeft.setText(`Time Left: ${Math.round((game.settings.gameTimer - this.timeElapsed) * 0.001)}`)
 
         this.starfield.tilePositionX -= 4
 
@@ -123,7 +133,7 @@ class Play extends Phaser.Scene {
         }
 
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-            this.scene.start("menuScene")
+            this.scene.start("mainMenu")
         }
     }
 
